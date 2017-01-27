@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG
  * This is an automatically generated prolog.
  *
- * $Source: src/java/capiblock/test/com/ibm/research/capiblock/jar/JarTest.java $
+ * $Source: src/test/java/blockmap/com/ibm/research/bench/Experiment.java $
  *
  * IBM Data Engine for NoSQL - Power Systems Edition User Library Project
  *
@@ -23,33 +23,17 @@
  *
  * IBM_PROLOG_END_TAG
  */
-package com.ibm.research.capiblock.jar;
-
-import java.io.IOException;
-
-import com.ibm.research.capiblock.CapiBlockDevice;
-import com.ibm.research.capiblock.Chunk;
+package com.ibm.research.bench;
 
 /**
- * Small functional test for the Jar distribution of the library
- * 
  * @author Jan S. Rellermeyer, IBM Research
- *
  */
-public class JarTest {
+public interface Experiment {
 
-	static final String CAPI_DEVICE_PATH_PROP = "CAPI_DEVICE_PATH"; //$NON-NLS-1$ 
+	void setUp() throws Exception;
 
-	static final String DEVICE = System.getProperty(CAPI_DEVICE_PATH_PROP, "/dev/sdc"); //$NON-NLS-1$
+	void run(final Context context) throws Exception;
 
-	public static void main(final String[] args) throws IOException {
-
-		final CapiBlockDevice dev = CapiBlockDevice.getInstance();
-		try (final Chunk chunk = dev.openChunk(DEVICE)) {
-			// nop
-		}
-		
-		System.err.println("### JarTest SUCCESS ###"); //$NON-NLS-1$
-	}
+	void tearDown() throws Exception;
 
 }

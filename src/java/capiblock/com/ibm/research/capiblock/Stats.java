@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG
  * This is an automatically generated prolog.
  *
- * $Source: Stats.java $
+ * $Source: src/java/capiblock/com/ibm/research/capiblock/Stats.java $
  *
  * IBM Data Engine for NoSQL - Power Systems Edition User Library Project
  *

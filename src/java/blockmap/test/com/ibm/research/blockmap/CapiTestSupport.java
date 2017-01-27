@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG
  * This is an automatically generated prolog.
  *
- * $Source: src/java/capiblock/test/com/ibm/research/capiblock/jar/JarTest.java $
+ * $Source: src/java/test/blockmap/com/ibm/research/blockmap/CapiTestSupport.java $
  *
  * IBM Data Engine for NoSQL - Power Systems Edition User Library Project
  *
@@ -23,33 +23,14 @@
  *
  * IBM_PROLOG_END_TAG
  */
-package com.ibm.research.capiblock.jar;
+package com.ibm.research.blockmap;
 
-import java.io.IOException;
+import org.junit.Ignore;
 
-import com.ibm.research.capiblock.CapiBlockDevice;
-import com.ibm.research.capiblock.Chunk;
-
-/**
- * Small functional test for the Jar distribution of the library
- * 
- * @author Jan S. Rellermeyer, IBM Research
- *
- */
-public class JarTest {
-
-	static final String CAPI_DEVICE_PATH_PROP = "CAPI_DEVICE_PATH"; //$NON-NLS-1$ 
-
-	static final String DEVICE = System.getProperty(CAPI_DEVICE_PATH_PROP, "/dev/sdc"); //$NON-NLS-1$
-
-	public static void main(final String[] args) throws IOException {
-
-		final CapiBlockDevice dev = CapiBlockDevice.getInstance();
-		try (final Chunk chunk = dev.openChunk(DEVICE)) {
-			// nop
-		}
-		
-		System.err.println("### JarTest SUCCESS ###"); //$NON-NLS-1$
-	}
+@Ignore
+class CapiTestSupport {
+	
+	//static final String DEVICE_PATH = "amd64".equals(System.getProperty("os.arch")) ? null : "/dev/sdf"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        static final String DEVICE_PATH="/dev/hdisk0";
 
 }

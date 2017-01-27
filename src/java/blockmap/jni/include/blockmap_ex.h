@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG
  * This is an automatically generated prolog.
  *
- * $Source: src/java/capiblock/jni/include/capiblock_ex.h $
+ * $Source: src/java/blockmap/jni/include/blockmap_ex.h $
  *
  * IBM Data Engine for NoSQL - Power Systems Edition User Library Project
  *
@@ -26,52 +26,54 @@
 
 // @author Jan S. Rellermeyer, IBM Research
 
-#ifndef INCLUDE_CAPIBLOCK_EX_H_
-#define INCLUDE_CAPIBLOCK_EX_H_
+#ifndef BLOCKMAP_EX_H_
+#define BLOCKMAP_EX_H_
 
 // maximum error message langth
 #define MSG_LEN 256
 
 static inline void throwIOException(JNIEnv* env, const char* msg)
 {
-   jclass exceptionClass = (*env)->FindClass(env, "java/io/IOException");
-   if (NULL == exceptionClass)
-   {
-      // if this class cannot be found there is already an exception set
-      return;
-   }
-   (*env)->ThrowNew(env, exceptionClass, msg);
+	jclass exceptionClass = (*env)->FindClass(env, "java/io/IOException");
+	if (NULL == exceptionClass)
+	{
+		// if this class cannot be found there is already an exception set
+		return;
+	}
+	(*env)->ThrowNew(env, exceptionClass, msg);
 }
 
 static inline void throwIOExceptionE(JNIEnv* env, const char* msg, int err)
 {
-   char message[MSG_LEN];
-   snprintf(message, MSG_LEN, "%s (Error Code=%d, %s)", msg, err,
-         strerror(err));
-   throwIOException(env, message);
+	char message[MSG_LEN];
+	snprintf(message, MSG_LEN, "%s (Error Code=%d, %s)", msg, err,
+			strerror(err));
+	throwIOException(env, message);
 }
 
 static inline void throwOOMError(JNIEnv* env, const char* msg)
 {
-   jclass exceptionClass = (*env)->FindClass(env, "java/lang/OutOfMemoryError");
-   if (NULL == exceptionClass)
-   {
-      // if this class cannot be found there is already an exception set
-      return;
-   }
-   (*env)->ThrowNew(env, exceptionClass, msg);
+	jclass exceptionClass = (*env)->FindClass(env,
+			"java/lang/OutOfMemoryError");
+	if (NULL == exceptionClass)
+	{
+		// if this class cannot be found there is already an exception set
+		return;
+	}
+	(*env)->ThrowNew(env, exceptionClass, msg);
 }
 
 static inline void throwIllegalStateException(JNIEnv* env, const char* msg)
 {
-   jclass exceptionClass = (*env)->FindClass(env,
-         "java/lang/IllegalStateException");
-   if (NULL == exceptionClass)
-   {
-      // if this class cannot be found there is already an exception set
-      return;
-   }
-   (*env)->ThrowNew(env, exceptionClass, msg);
+	jclass exceptionClass = (*env)->FindClass(env,
+			"java/lang/IllegalStateException");
+	if (NULL == exceptionClass)
+	{
+		// if this class cannot be found there is already an exception set
+		return;
+	}
+	(*env)->ThrowNew(env, exceptionClass, msg);
 }
 
-#endif /* INCLUDE_CAPIBLOCK_EX_H_ */
+
+#endif /* BLOCKMAP_EX_H_ */

@@ -1,7 +1,7 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: src/java/capiblock/makefile $
+# $Source: src/java/blockmap/config.mk $
 #
 # IBM Data Engine for NoSQL - Power Systems Edition User Library Project
 #
@@ -40,38 +40,42 @@ JAVA_TEST_BIN:=$(BUILD_DIR)/test
 
 JAVADOC_OUT:=doc
 
-PKG:=com.ibm.research.capiblock
+PKG:=com.ibm.research.blockmap
 PKG_PATH:=$(subst .,/,$(PKG))
 
-JAVA_CLASSES:=$(JAVA_BIN)/$(PKG_PATH)/CapiBlockDevice.class
-JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/Chunk.class
-JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/ObjectStreamBuffer.class
+JAVA_CLASSES:=$(JAVA_BIN)/$(PKG_PATH)/CapiKvDevice.class
+JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/Callback.class
+JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/AbstractBlockMap.class
+JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/BlockMap.class
+JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/ObjectStreamBlockMap.class
 
-LIB_NAME:=libcapiblock.so
+LIB_NAME:=libblockmap.so
 LIB_PATH:=$(JNI_BIN)/
 
 JNI_TYPE:=$(PKG).CapiBlockDevice
 JNI_CLASS:=$(JAVA_BIN)/$(subst .,/,$(JNI_TYPE)).class
-JNI_HEADER:=$(JNI_SRC)/include/capiblock_jni.h
+JNI_HEADER:=$(JNI_SRC)/include/blockmap_jni.h
 
-JAR_FILENAME:=capiblock.jar
-DIST_FILENAME:=capiblock.tar.gz
-DIST_EXTRA_TARGETS:=example copy_example
+JAR_FILENAME:=blockmap.jar
+DIST_FILENAME:=blockmap.tar.gz
+DIST_EXTRA_TARGETS:=
+
+OBJECTS:=$(JNI_BIN)/blockmap.o
 
 LD_FLAGS+=-lpthread
-LD_FLAGS+=-lcflsh_block
-
-.PHONY: example
-.PHONY: copy_example
-
-example: $(JAR_FILENAME)
-	$(JAVAC) -sourcepath $(JAVA_TEST_SRC) -cp $(JAVA_BIN) -d $(JAVA_TEST_BIN) $(JAVA_TEST_SRC)/$(PKG_PATH)/example/Example.java
-#	$(JAVA) -Djava.library.path=$(JNI_BIN) -cp capiblock.jar:$(JAVA_TEST_BIN) $(PKG).example.Example
-	
-copy_example:
-	mkdir -p capiblock/example/$(PKG_PATH)/example
-	cp -r $(JAVA_TEST_SRC)/$(PKG_PATH)/example/Example.java capiblock/example/$(PKG_PATH)/example/
-	$(JAVAC) -sourcepath $(TMP_DIR)/example -cp capiblock.jar -d capiblock/example capiblock/example/$(PKG_PATH)/example/Example.java
-	echo "\$$JAVA_HOME/bin/java -Djava.library.path=. -cp example:capiblock.jar com.ibm.research.capiblock.example.Example" > capiblock/run_example.sh
+LD_FLAGS+=-larkdb
 
 include ../config.mk
+
+NATIVE_SRC:=native_test
+NATIVE_BIN:=$(BUILD_DIR)/native_test
+
+$(NATIVE_BIN)/native_test.o: $(NATIVE_SRC)/native_test.c
+	$(CC) $(INCLUDES) -I$(ROOTPATH)/src/kv $(C_FLAGS) -std=c99 -c $< -o $@
+
+$(NATIVE_BIN):
+	mkdir -p $(NATIVE_BIN)	
+	
+native_test: .dirs $(NATIVE_BIN) $(NATIVE_BIN)/native_test.o	
+	$(CC) $(NATIVE_BIN)/native_test.o $(LD_FLAGS) -o $(NATIVE_BIN)/native_test
+	$(NATIVE_BIN)/native_test
