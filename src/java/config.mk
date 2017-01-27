@@ -102,8 +102,7 @@ doc: $(JAVA_CLASSES)
 
 $(TMP_DIR):
 	mkdir $(TMP_DIR)
-	
-# TODO: FIX        
+	        
 dist: $(JAR_FILENAME) $(LIB_PATH)$(LIB_NAME) $(TMP_DIR) $(DIST_EXTRA_TARGETS) doc
 	cp $(JAR_FILENAME) $(TMP_DIR)/
 	cp $(LIB_PATH)$(LIB_NAME) $(TMP_DIR)/

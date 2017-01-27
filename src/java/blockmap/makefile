@@ -29,6 +29,8 @@ ROOTPATH = ../../..
 
 BUILD_DIR:=build
 
+KRYO?=1
+
 JAVA_SRC:=.
 JAVA_BIN:=$(BUILD_DIR)/java
 
@@ -37,6 +39,9 @@ JNI_BIN:=$(BUILD_DIR)/jni
 
 JAVA_TEST_SRC:=test
 JAVA_TEST_BIN:=$(BUILD_DIR)/test
+
+KRYO_SRC:=kryo
+KRYO_DEP_DIR:=kryo_libs
 
 JAVADOC_OUT:=doc
 
@@ -64,6 +69,37 @@ OBJECTS:=$(JNI_BIN)/blockmap.o
 
 LD_FLAGS+=-lpthread
 LD_FLAGS+=-larkdb
+
+OBJENESIS_VER:=1.2
+OBJENESIS_JAR:=objenesis-$(OBJENESIS_VER).jar
+OBJENESIS_URL:=http://central.maven.org/maven2/org/objenesis/objenesis/$(OBJENESIS_VER)/$(OBJENESIS_JAR)
+REFLECTASM_VER:=1.09
+REFLECTASM_JAR:=reflectasm-$(REFLECTASM_VER)-shaded.jar
+REFLECTASM_URL:=http://central.maven.org/maven2/com/esotericsoftware/reflectasm/reflectasm/$(REFLECTASM_VER)/$(REFLECTASM_JAR)
+MINLOG_VER:=1.2
+MINLOG_JAR:=minlog-$(MINLOG_VER).jar
+MINLOG_URL:=http://central.maven.org/maven2/com/esotericsoftware/minlog/minlog/$(MINLOG_VER)/$(MINLOG_JAR)
+KRYO_VER:=3.0.1
+KRYO_JAR:=kryo-$(KRYO_VER).jar
+KRYO_URL:=http://central.maven.org/maven2/com/esotericsoftware/kryo/$(KRYO_VER)/$(KRYO_JAR)
+
+KRYO_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/kryo/KryoBlockMap.class
+
+KRYO_DEPS:=$(JAVA_BIN):$(KRYO_DEP_DIR)/$(KRYO_JAR):$(KRYO_DEP_DIR)/$(MINLOG_JAR):$(KRYO_DEP_DIR)/$(OBJENESIS_JAR):$(KRYO_DEP_DIR)/$(REFLECTASM_JAR)
+
+ifeq ($(KRYO), 1)
+EXTRA+=$(KRYO_CLASSES)
+endif
+
+$(KRYO_DEP_DIR):
+	mkdir -p $(KRYO_DEP_DIR)
+	wget $(OBJENESIS_URL) -O $(KRYO_DEP_DIR)/$(OBJENESIS_JAR)
+	wget $(REFLECTASM_URL) -O $(KRYO_DEP_DIR)/$(REFLECTASM_JAR)
+	wget $(MINLOG_URL) -O $(KRYO_DEP_DIR)/$(MINLOG_JAR)
+	wget $(KRYO_URL) -O $(KRYO_DEP_DIR)/$(KRYO_JAR)
+
+$(KRYO_CLASSES): $(JAVA_BIN)/%.class: $(KRYO_SRC)/%.java $(KRYO_DEP_DIR)
+	$(JAVAC) -cp $(KRYO_DEPS) -sourcepath $(KRYO_SRC) -d $(JAVA_BIN) $<
 
 include ../config.mk
 
