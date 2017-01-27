@@ -37,6 +37,8 @@ JAVA_BIN:=$(BUILD_DIR)/java
 JNI_SRC:=jni
 JNI_BIN:=$(BUILD_DIR)/jni
 
+OBJS:=$(JNI_BIN)/blockmap.o
+
 JAVA_TEST_SRC:=test
 JAVA_TEST_BIN:=$(BUILD_DIR)/test
 
@@ -64,8 +66,6 @@ JNI_HEADER:=$(JNI_SRC)/include/blockmap_jni.h
 JAR_FILENAME:=blockmap.jar
 DIST_FILENAME:=blockmap.tar.gz
 DIST_EXTRA_TARGETS:=
-
-OBJECTS:=$(JNI_BIN)/blockmap.o
 
 LD_FLAGS+=-lpthread
 LD_FLAGS+=-larkdb
@@ -103,11 +103,13 @@ $(KRYO_CLASSES): $(JAVA_BIN)/%.class: $(KRYO_SRC)/%.java $(KRYO_DEP_DIR)
 
 include ../config.mk
 
+INCLUDES+=-I$(ROOTPATH)/src/kv
+
 NATIVE_SRC:=native_test
 NATIVE_BIN:=$(BUILD_DIR)/native_test
 
 $(NATIVE_BIN)/native_test.o: $(NATIVE_SRC)/native_test.c
-	$(CC) $(INCLUDES) -I$(ROOTPATH)/src/kv $(C_FLAGS) -std=c99 -c $< -o $@
+	$(CC) $(INCLUDES) $(C_FLAGS) -std=c99 -c $< -o $@
 
 $(NATIVE_BIN):
 	mkdir -p $(NATIVE_BIN)	

@@ -35,6 +35,8 @@ JAVA_BIN:=$(BUILD_DIR)/java
 JNI_SRC:=jni
 JNI_BIN:=$(BUILD_DIR)/jni
 
+OBJS:=$(JNI_BIN)/capiblock.o
+
 JAVA_TEST_SRC:=test
 JAVA_TEST_BIN:=$(BUILD_DIR)/test
 

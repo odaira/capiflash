@@ -30,7 +30,7 @@ import org.junit.Ignore;
 @Ignore
 class CapiTestSupport {
 	
-	//static final String DEVICE_PATH = "amd64".equals(System.getProperty("os.arch")) ? null : "/dev/sdf"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        static final String DEVICE_PATH="/dev/hdisk0";
+	static final String DEVICE_PATH = "amd64".equals(System.getProperty("os.arch")) ? null : "/dev/sdf"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    //static final String DEVICE_PATH="/dev/hdisk0";
 
 }

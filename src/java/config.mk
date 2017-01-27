@@ -74,11 +74,12 @@ TMP_DIR:=$(subst .jar,,$(JAR_FILENAME))
 $(JAVA_CLASSES): $(JAVA_BIN)/%.class: $(JAVA_SRC)/%.java
 	$(JAVAC) -sourcepath $(JAVA_SRC) -d $(JAVA_BIN) $<
 
-$(OBJECTS): $(JNI_BIN)/%.o: $(JNI_SRC)/%.c
+$(OBJS): $(JNI_BIN)/%.o: $(JNI_SRC)/%.c
 	$(CC) $(INCLUDES) $(C_FLAGS) -c $< -o $@
 
-$(LIB_PATH)$(LIB_NAME): $(JNI_HEADER) $(OBJECTS)
-	$(LD) -Wl,-soname=$(LIB_NAME) $(OBJECTS) $(LD_FLAGS) -shared -o $(LIB_PATH)$(LIB_NAME)
+$(LIB_PATH)$(LIB_NAME): $(JNI_HEADER) $(OBJS)
+	echo "OBJECTS ARE $(OBJS)"
+	$(LD) -Wl,-soname=$(LIB_NAME) $(OBJS) $(LD_FLAGS) -shared -o $(LIB_PATH)$(LIB_NAME)
 
 $(JAVA_TEST_CLASSES): $(JAVA_TEST_BIN)/%.class: $(JAVA_TEST_SRC)/%.java
 	$(JAVAC) -cp $(JAVA_BIN):$(JUNIT_JAR) -sourcepath $(JAVA_TEST_SRC) -d $(JAVA_TEST_BIN) $<
