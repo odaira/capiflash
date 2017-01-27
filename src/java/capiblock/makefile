@@ -66,7 +66,6 @@ LD_FLAGS+=-lcflsh_block
 
 example: $(JAR_FILENAME)
 	$(JAVAC) -sourcepath $(JAVA_TEST_SRC) -cp $(JAVA_BIN) -d $(JAVA_TEST_BIN) $(JAVA_TEST_SRC)/$(PKG_PATH)/example/Example.java
-#	$(JAVA) -Djava.library.path=$(JNI_BIN) -cp capiblock.jar:$(JAVA_TEST_BIN) $(PKG).example.Example
 	
 copy_example:
 	mkdir -p capiblock/example/$(PKG_PATH)/example

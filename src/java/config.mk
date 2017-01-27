@@ -117,7 +117,7 @@ clean:
 	rm -rf $(JAR_FILENAME)
 	rm -rf $(DIST_FILENAME)
 
-distclean: clean
+distclean:: clean
 	rm -f $(JUNIT_JAR)
 
 dumpclean:

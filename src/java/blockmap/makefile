@@ -115,3 +115,6 @@ $(NATIVE_BIN):
 native_test: .dirs $(NATIVE_BIN) $(NATIVE_BIN)/native_test.o	
 	$(CC) $(NATIVE_BIN)/native_test.o $(LD_FLAGS) -o $(NATIVE_BIN)/native_test
 	$(NATIVE_BIN)/native_test
+
+distclean::
+	rm -rf $(KRYO_DEP_DIR)
