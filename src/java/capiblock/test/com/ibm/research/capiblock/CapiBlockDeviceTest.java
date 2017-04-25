@@ -359,7 +359,7 @@ public class CapiBlockDeviceTest {
 	
 	@Test
 	public void testBlock() throws Exception {
-		try (final Chunk chunk = cblk.openChunk("/dev/sdc")) {  //$NON-NLS-1$ 
+		try (final Chunk chunk = cblk.openChunk(DEVICE)) {  //$NON-NLS-1$ 
 			final ByteBuffer buf = ByteBuffer.allocateDirect(1);
 			try {
 				chunk.readBlock(0, 100, buf);
