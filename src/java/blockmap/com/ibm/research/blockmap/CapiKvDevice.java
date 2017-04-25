@@ -42,7 +42,47 @@ import java.util.Set;
 public final class CapiKvDevice implements Closeable, AutoCloseable {
 
 	static {
-		System.loadLibrary("blockmap"); //$NON-NLS-1$
+		String resourceName = "/linux/" + System.getProperty("os.arch") + "/libblockmap.so";
+		InputStream is = CapiKvDevice.class.getResourceAsStream(resourceName);
+		if (is == null) {
+			throw new UnsupportedOperationException("Unsupported OS/arch. Cannot find " + resourceName);
+		}
+		File tempLib = null;
+		boolean loaded = false;
+		FileOutputStream out = null;
+		try {
+			tempLib = File.createTempFile("libblockmap", ".so");
+			out = new FileOutputStream(tempLib);
+
+			byte[] buf = new byte[4096];
+			while (true) {
+				int read = is.read(buf);
+				if (read == -1) {
+					break;
+				}
+				out.write(buf, 0, read);
+			}
+			out.close();
+			out = null;
+			System.load(tempLib.getAbsolutePath());
+			loaded = true;
+		} catch (IOException ex) {
+			throw new ExceptionInInitializerError("Cannot load libblockmap");
+		} finally {
+			try {
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException ex) {
+			}
+			if (tempLib != null && tempLib.exists()) {
+				if (!loaded) {
+					tempLib.delete();
+				} else {
+					tempLib.deleteOnExit();
+				}
+			}
+		}
 	}
 
 	/** The ark. */

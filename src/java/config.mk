@@ -39,6 +39,10 @@ JAVA_TEST_FILES+=$(wildcard $(JAVA_TEST_SRC)/$(PKG_PATH)/*.java)
 JAVA_TEST_CLASSES:=$(JAVA_TEST_FILES:$(JAVA_TEST_SRC)/%.java=$(JAVA_TEST_BIN)/%.class)
 JAVA_TESTS:=$(subst /,.,$(JAVA_TEST_FILES:$(JAVA_TEST_SRC)/%.java=%))
 
+OSINFO_CLASS:=com.ibm.research.osinfo.CapiOSInfo
+OS_NAME:=$(shell $(JAVA) -cp ../osinfo $(OSINFO_CLASS) --name)
+OS_ARCH:=$(shell $(JAVA) -cp ../osinfo $(OSINFO_CLASS) --arch)
+
 JUNIT_VERSION:=4.3
 JUNIT_JAR:=junit-$(JUNIT_VERSION).jar
 
@@ -68,6 +72,7 @@ TMP_DIR:=$(subst .jar,,$(JAR_FILENAME))
 
 .dirs:
 	mkdir -p $(JAVA_BIN)
+	mkdir -p $(LIB_PATH)
 	mkdir -p $(JNI_BIN)
 	mkdir -p $(JAVA_TEST_BIN)
 
@@ -90,7 +95,7 @@ $(JUNIT_JAR):
 test: all $(JUNIT_JAR) $(JAVA_TEST_CLASSES)
 	$(JAVA) -XX:+ShowMessageBoxOnError -Xdump:none -Djava.library.path=$(JNI_BIN):$(IMGDIR) -cp $(JAVA_BIN):$(JAVA_TEST_BIN):$(JUNIT_JAR) org.junit.runner.JUnitCore $(JAVA_TESTS)       
 
-$(JAR_FILENAME): .dirs $(JAVA_CLASSES) $(EXTRA)
+$(JAR_FILENAME): .dirs $(JAVA_CLASSES) $(LIB_PATH)$(LIB_NAME) $(EXTRA)
 	$(JAR) -cvf $(JAR_FILENAME) -C $(JAVA_BIN) . 
 
 jartest: $(JAR_FILENAME) $(LIB_PATH)$(LIB_NAME)
@@ -106,7 +111,6 @@ $(TMP_DIR):
 	        
 dist: $(JAR_FILENAME) $(LIB_PATH)$(LIB_NAME) $(TMP_DIR) $(DIST_EXTRA_TARGETS) doc
 	cp $(JAR_FILENAME) $(TMP_DIR)/
-	cp $(LIB_PATH)$(LIB_NAME) $(TMP_DIR)/
 	cp -r $(JAVADOC_OUT) $(TMP_DIR)/
 	tar cvzf $(DIST_FILENAME) $(TMP_DIR)/
 	rm -rf $(TMP_DIR)

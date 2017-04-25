@@ -57,7 +57,7 @@ JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/BlockMap.class
 JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/ObjectStreamBlockMap.class
 
 LIB_NAME:=libblockmap.so
-LIB_PATH:=$(JNI_BIN)/
+LIB_PATH:=$(JAVA_BIN)/$(OS_NAME)/$(OS_ARCH)/
 
 JNI_TYPE:=$(PKG).CapiBlockDevice
 JNI_CLASS:=$(JAVA_BIN)/$(subst .,/,$(JNI_TYPE)).class
@@ -113,7 +113,7 @@ $(NATIVE_BIN)/native_test.o: $(NATIVE_SRC)/native_test.c
 
 $(NATIVE_BIN):
 	mkdir -p $(NATIVE_BIN)	
-	
+
 native_test: .dirs $(NATIVE_BIN) $(NATIVE_BIN)/native_test.o	
 	$(CC) $(NATIVE_BIN)/native_test.o $(LD_FLAGS) -o $(NATIVE_BIN)/native_test
 	$(NATIVE_BIN)/native_test
