@@ -60,7 +60,7 @@ public interface Callback<K, V> {
 
 	/**
 	 * Callback for the asynchronous
-	 * {@link com.ibm.research.blockmap.AbstractBlockMap#getAsync(java.lang.String,com.ibm.research.blockmap.Callback)}
+	 * {@link com.ibm.research.blockmap.AbstractBlockMap#getAsync(java.lang.String,com.ibm.research.blockmap.AbstractBlockMap.Block,com.ibm.research.blockmap.Callback.Get)}
 	 * method.
 	 *
 	 * @param <B>
@@ -72,7 +72,7 @@ public interface Callback<K, V> {
 
 	/**
 	 * Callback for the asynchronous
-	 * {@link com.ibm.research.blockmap.AbstractBlockMap#putAsync(java.lang.String,com.ibm.research.blockmap.AbstractBlockMap.Block,com.ibm.research.blockmap.Callback)}
+	 * {@link com.ibm.research.blockmap.AbstractBlockMap#putAsync(java.lang.String,com.ibm.research.blockmap.AbstractBlockMap.Block,com.ibm.research.blockmap.Callback.Put)}
 	 * method.
 	 * 
 	 * @author Jan S. Rellermeyer, IBM Research
@@ -83,7 +83,7 @@ public interface Callback<K, V> {
 
 	/**
 	 * Callback for the asynchronous
-	 * {@link com.ibm.research.blockmap.AbstractBlockMap#deleteAsync(java.lang.String,com.ibm.research.blockmap.Callback)}
+	 * {@link com.ibm.research.blockmap.AbstractBlockMap#deleteAsync(java.lang.String,com.ibm.research.blockmap.Callback.Delete)}
 	 * method.
 	 * 
 	 * @author Jan S. Rellermeyer, IBM Research
@@ -94,7 +94,7 @@ public interface Callback<K, V> {
 
 	/**
 	 * Callback for the asynchronous
-	 * {@link com.ibm.research.blockmap.AbstractBlockMap#containsKeyAsync(java.lang.String,com.ibm.research.blockmap.Callback)}
+	 * {@link com.ibm.research.blockmap.AbstractBlockMap#containsKeyAsync(java.lang.String,com.ibm.research.blockmap.Callback.ContainsKey)}
 	 * method.
 	 * 
 	 * @author Jan S. Rellermeyer, IBM Research
