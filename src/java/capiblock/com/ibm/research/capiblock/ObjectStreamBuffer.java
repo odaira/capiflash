@@ -183,8 +183,8 @@ public class ObjectStreamBuffer {
 	 * @return the object.
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
-	 * @throws Signals
-	 *             that the class of one or more serialized objects could not be
+	 * @throws ClassNotFoundException
+	 *             Signals that the class of one or more serialized objects could not be
 	 *             found in the class path.
 	 */
 	public <T> T unwrap() throws IOException, ClassNotFoundException {
