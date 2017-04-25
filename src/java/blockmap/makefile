@@ -57,7 +57,7 @@ JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/BlockMap.class
 JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/ObjectStreamBlockMap.class
 
 LIB_NAME:=libblockmap.so
-LIB_PATH:=$(JAVA_BIN)/$(OS_NAME)/$(OS_ARCH)/
+LIB_PATH=$(JAVA_BIN)/$(OS_NAME)/$(OS_ARCH)/
 
 JNI_TYPE:=$(PKG).CapiBlockDevice
 JNI_CLASS:=$(JAVA_BIN)/$(subst .,/,$(JNI_TYPE)).class
