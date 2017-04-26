@@ -50,7 +50,7 @@ JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/Chunk.class
 JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/ObjectStreamBuffer.class
 
 LIB_NAME:=libcapiblock.so
-LIB_PATH:=$(JNI_BIN)/
+LIB_PATH=$(JAVA_BIN)/$(OS_NAME)/$(OS_ARCH)/
 
 JNI_TYPE:=$(PKG).CapiBlockDevice
 JNI_CLASS:=$(JAVA_BIN)/$(subst .,/,$(JNI_TYPE)).class
@@ -68,7 +68,7 @@ LD_FLAGS+=-lcflsh_block
 
 example: $(JAR_FILENAME)
 	$(JAVAC) -sourcepath $(JAVA_TEST_SRC) -cp $(JAVA_BIN) -d $(JAVA_TEST_BIN) $(JAVA_TEST_SRC)/$(PKG_PATH)/example/Example.java
-	
+
 copy_example:
 	mkdir -p capiblock/example/$(PKG_PATH)/example
 	cp -r $(JAVA_TEST_SRC)/$(PKG_PATH)/example/Example.java capiblock/example/$(PKG_PATH)/example/
