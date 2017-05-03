@@ -47,6 +47,8 @@ PKG_PATH:=$(subst .,/,$(PKG))
 
 JAVA_CLASSES:=$(JAVA_BIN)/$(PKG_PATH)/CapiBlockDevice.class
 JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/Chunk.class
+JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/EmulatedChunk.class
+JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/Stats.class
 JAVA_CLASSES+=$(JAVA_BIN)/$(PKG_PATH)/ObjectStreamBuffer.class
 
 LIB_NAME:=libcapiblock.so
