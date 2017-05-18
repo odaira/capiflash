@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG
  * This is an automatically generated prolog.
  *
- * $Source: src/java/capiblock/com/ibm/research/capiblock/Chunk.java $
+ * $Source: src/java/capiblock/com/ibm/research/capiblock/EmulatedChunk.java $
  *
  * IBM Data Engine for NoSQL - Power Systems Edition User Library Project
  *
@@ -28,8 +28,8 @@ package com.ibm.research.capiblock;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Emulated chunk of CAPI Flash, using RandomAccessFile
@@ -73,9 +73,9 @@ public class EmulatedChunk extends Chunk {
 			buf.rewind();
 			buf.limit((int) nBlocks * CapiBlockDevice.BLOCK_SIZE);
 			synchronized (inChannel) {
-				inChannel.write(buf, (long) lba * CapiBlockDevice.BLOCK_SIZE);
+				inChannel.write(buf, lba * CapiBlockDevice.BLOCK_SIZE);
 			}
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			throw new IOException(ex);
 		}
 		synchronized (this) {
@@ -106,11 +106,11 @@ public class EmulatedChunk extends Chunk {
 			int oldLimit = buf.limit();
 			buf.limit((int) (nBlocks * CapiBlockDevice.BLOCK_SIZE));
 			synchronized (inChannel) {
-				inChannel.read(buf, (long) lba * CapiBlockDevice.BLOCK_SIZE);
+				inChannel.read(buf, lba * CapiBlockDevice.BLOCK_SIZE);
 			}
 			buf.limit(oldLimit);
 			buf.rewind();
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			throw new IOException(ex);
 		}
 		synchronized (this) {
@@ -143,9 +143,7 @@ public class EmulatedChunk extends Chunk {
 			numAReads++;
 			numReads--;
 		}
-		CompletableFuture<Long> future = new CompletableFuture<Long>();
-		future.complete(retVal);
-		return (Future<Long>) future;
+		return new EmulatedFuture(retVal);
 	}
 
 	/**
@@ -171,9 +169,7 @@ public class EmulatedChunk extends Chunk {
 			numAWrites++;
 			numWrites--;
 		}
-		CompletableFuture<Long> future = new CompletableFuture<Long>();
-		future.complete(retVal);
-		return (Future<Long>) future;
+		return new EmulatedFuture(retVal);
 	}
 
 	/**
@@ -233,5 +229,34 @@ public class EmulatedChunk extends Chunk {
 				 0, 0,
 				 0, 0,
 				 0, 0);
+	}
+	
+	private static class EmulatedFuture implements Future<Long> {
+		
+		private final long retVal;
+		
+		protected EmulatedFuture(final long retVal) {
+			this.retVal = retVal;
+		}
+		
+		public boolean cancel(final boolean ignored) {
+			return false;
+		}
+		
+		public Long get() {
+			return retVal;
+		}
+		
+		public Long get(final long timeout, final TimeUnit unit) {
+			return retVal;
+		}
+		
+		public boolean isCancelled() {
+			return false;
+		}
+		
+		public boolean isDone() {
+			return true;
+		}
 	}
 }

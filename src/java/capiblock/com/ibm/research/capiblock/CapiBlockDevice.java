@@ -49,8 +49,12 @@ public class CapiBlockDevice {
 	 * the block size in Bytes
 	 */
 	public static final int BLOCK_SIZE = 4096;
+	public static final String CAPI_BLOCK_VERBOSE_PROPERTY_NAME = "com.ibm.research.capiblock.verbose"; //$NON-NLS-1$
+	public static final String CAPI_BLOCK_EMULATION_PROPERTY_NAME = "com.ibm.research.capiblock.emulation"; //$NON-NLS-1$
+	public static final String CAPI_BLOCK_CAPACITY_PROPERTY_NAME = "com.ibm.research.capiblock.capacity"; //$NON-NLS-1$
+	
 	private static boolean useEmulation = false;
-	private static boolean verbose = Boolean.parseBoolean(System.getProperty("capi.block.verbose", "false"));
+	private static boolean verbose = Boolean.parseBoolean(System.getProperty(CAPI_BLOCK_VERBOSE_PROPERTY_NAME, "false"));
 
 	static {
 		initialize();
@@ -58,28 +62,28 @@ public class CapiBlockDevice {
 
 	// Have this private static method because a static initializer cannot have return in it.
 	private static void initialize() {
-		String emulationProperty = System.getProperty("capi.block.emulation");
+		final String emulationProperty = System.getProperty(CAPI_BLOCK_EMULATION_PROPERTY_NAME);
 		if (emulationProperty != null) {
-			useEmulation = Boolean.parseBoolean(emulationProperty);
+			useEmulation = Boolean.getBoolean(CAPI_BLOCK_EMULATION_PROPERTY_NAME);
 			if (useEmulation) {
 				if (verbose) {
-					System.err.println("WARNING: CAPI block library will use emulation");
+					System.err.println("WARNING: CAPI block library will use emulation"); //$NON-NLS-1$
 				}
 				return;
 			}
 		}
 
-		String resourceName = "/linux/" + System.getProperty("os.arch") + "/libcapiblock.so";
-		InputStream is = CapiBlockDevice.class.getResourceAsStream(resourceName);
+		final String resourceName = "/linux/" + System.getProperty("os.arch") + "/libcapiblock.so"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		final InputStream is = CapiBlockDevice.class.getResourceAsStream(resourceName);
 		if (is == null) {
 			if (emulationProperty != null && !useEmulation) {
 				// The user explicitly disabled the emulation,
 				// but cannot find the JNI library, so throw an exception.
-				throw new UnsupportedOperationException("Unsupported OS/arch. Cannot find " + resourceName);
+				throw new UnsupportedOperationException("Unsupported OS/arch. Cannot find " + resourceName); //$NON-NLS-1$
 			} else {
 				useEmulation = true;
 				if (verbose) {
-					System.err.println("WARNING: CAPI block library will use emulation");
+					System.err.println("WARNING: CAPI block library will use emulation"); //$NON-NLS-1$
 				}
 				return;
 			}
@@ -88,10 +92,10 @@ public class CapiBlockDevice {
 		boolean loaded = false;
 		FileOutputStream out = null;
 		try {
-			tempLib = File.createTempFile("libcapiblock", ".so");
+			tempLib = File.createTempFile("libcapiblock", ".so"); //$NON-NLS-1$ //$NON-NLS-2$
 			out = new FileOutputStream(tempLib);
 
-			byte[] buf = new byte[4096];
+			final byte[] buf = new byte[4096];
 			while (true) {
 				int read = is.read(buf);
 				if (read == -1) {
@@ -103,15 +107,15 @@ public class CapiBlockDevice {
 			out = null;
 			System.load(tempLib.getAbsolutePath());
 			loaded = true;
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			if (emulationProperty != null && !useEmulation) {
 				// The user explicitly disabled the emulation,
 				// but cannot load the JNI library, so throw an exception.
-				throw new ExceptionInInitializerError("Cannot load libcapiblock");
+				throw new ExceptionInInitializerError("Cannot load libcapiblock"); //$NON-NLS-1$
 			} else {
 				useEmulation = true;
 				if (verbose) {
-					System.err.println("WARNING: CAPI block library will use emulation");
+					System.err.println("WARNING: CAPI block library will use emulation"); //$NON-NLS-1$
 				}
 				return;
 			}
@@ -120,7 +124,8 @@ public class CapiBlockDevice {
 				if (out != null) {
 					out.close();
 				}
-			} catch (IOException ex) {
+			} catch (final IOException ex) {
+				// ignore exception during close
 			}
 			if (tempLib != null && tempLib.exists()) {
 				if (!loaded) {
@@ -146,9 +151,9 @@ public class CapiBlockDevice {
 		if (instance == null) {
 			instance = new CapiBlockDevice();
 			if (useEmulation) {
-				String capacityProperty = System.getProperty("capi.block.capacity");
+				final String capacityProperty = System.getProperty(CAPI_BLOCK_CAPACITY_PROPERTY_NAME);
 				if (capacityProperty == null) {
-					throw new IllegalStateException("Necessary property capi.block.capacity is not set");
+					throw new IllegalStateException("Necessary property com.ibm.research.capiblock.capacity is not set"); //$NON-NLS-1$
 				}
 				capacity = Integer.parseInt(capacityProperty);
 			}
@@ -161,7 +166,7 @@ public class CapiBlockDevice {
 	 *
 	 * @return true, if the CAPI Flash emulation is being used. false, otherwise.
 	 */
-	public boolean useEmulation() {
+	public boolean isEmulated() {
 		return useEmulation;
 	}
 
@@ -191,20 +196,20 @@ public class CapiBlockDevice {
 	 * @throws IOException
 	 *             when the operation failed.
 	 */
-	public Chunk openChunk(final String path, int maxRequests)
+	public Chunk openChunk(final String path, final int maxRequests)
 			throws IOException {
 		if (useEmulation) {
 			if (maxRequests < 0) {
-				throw new IOException("maxRequests must not be negative");
+				throw new IOException("maxRequests must not be negative"); //$NON-NLS-1$
 			}
 			synchronized (this) {
 				RandomAccessFile f = null;
 				if (files.containsKey(path)) {
-					FileAndCounterPair pair = files.get(path);
+					final FileAndCounterPair pair = files.get(path);
 					pair.referenceCounter++;
 					f = pair.file;
 				} else {
-					f = new RandomAccessFile(path, "rws");
+					f = new RandomAccessFile(path, "rws"); //$NON-NLS-1$
 					f.setLength((long) BLOCK_SIZE * capacity);
 					files.put(path, new FileAndCounterPair(f));
 				}
@@ -215,13 +220,13 @@ public class CapiBlockDevice {
 		}
 	}
 
-	synchronized void closeEmulation(String path) throws IOException {
+	synchronized void closeEmulation(final String path) throws IOException {
 		if (!useEmulation) {
-			throw new IllegalStateException("closeEmulation() is called when CAPI Flash emulation is not used");
+			throw new IllegalStateException("closeEmulation() is called when CAPI Flash emulation is not used"); //$NON-NLS-1$
 		}
-		FileAndCounterPair pair = files.get(path);
+		final FileAndCounterPair pair = files.get(path);
 		if (pair == null) {
-			throw new IllegalStateException("Trying to close a non-existing CAPI Flash emulation file: " + path);
+			throw new IllegalStateException("Trying to close a non-existing CAPI Flash emulation file: " + path); //$NON-NLS-1$
 		}
 		pair.referenceCounter--;
 		if (pair.referenceCounter == 0) {
@@ -231,10 +236,10 @@ public class CapiBlockDevice {
 	}
 
 	private class FileAndCounterPair {
-		RandomAccessFile file;
+		final RandomAccessFile file;
 		int referenceCounter;
 
-		FileAndCounterPair(RandomAccessFile file) {
+		FileAndCounterPair(final RandomAccessFile file) {
 			this.file = file;
 			referenceCounter = 1;
 		}

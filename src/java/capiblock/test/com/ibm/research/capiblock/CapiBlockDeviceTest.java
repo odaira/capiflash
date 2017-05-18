@@ -48,10 +48,10 @@ import static org.junit.Assert.fail;
  *
  */
 public class CapiBlockDeviceTest {
-	
-	static final String CAPI_DEVICE_PATH_PROP = "CAPI_DEVICE_PATH"; //$NON-NLS-1$ 
 
-	static final String DEVICE = System.getProperty(CAPI_DEVICE_PATH_PROP, "/dev/sdc"); //$NON-NLS-1$ 
+	static final String CAPI_DEVICE_PATH_PROP = "CAPI_DEVICE_PATH"; //$NON-NLS-1$
+
+	static final String DEVICE = System.getProperty(CAPI_DEVICE_PATH_PROP, "/dev/sdc"); //$NON-NLS-1$
 
 	private CapiBlockDevice cblk;
 
@@ -73,37 +73,37 @@ public class CapiBlockDeviceTest {
 
 	@Test
 	public void testOpen() {
-		try (final Chunk chunk = cblk.openChunk("/dev/foo")) {  //$NON-NLS-1$ 
-			fail();
-		} catch (final IOException ioe) {
-			// expected
-		}
-	
-		try (final Chunk chunk = cblk.openChunk("/dev/null")) {  //$NON-NLS-1$ 
+		try (final Chunk chunk = cblk.openChunk("/dev/foo")) { //$NON-NLS-1$
 			fail();
 		} catch (final IOException ioe) {
 			// expected
 		}
 
-		try (final Chunk chunk = cblk.openChunk(DEVICE)) {  
+		try (final Chunk chunk = cblk.openChunk("/dev/null")) { //$NON-NLS-1$
+			fail();
+		} catch (final IOException ioe) {
+			// expected
+		}
+
+		try (final Chunk chunk = cblk.openChunk(DEVICE)) {
 			// success
 		} catch (final IOException ioe) {
 			fail(ioe.getMessage());
 		}
-		
-		try (final Chunk chunk = cblk.openChunk(DEVICE, 0)) {  
+
+		try (final Chunk chunk = cblk.openChunk(DEVICE, 0)) {
 			// success
 		} catch (final IOException ioe) {
 			fail(ioe.getMessage());
 		}
-		
-		try (final Chunk chunk = cblk.openChunk(DEVICE, -1)) {  
+
+		try (final Chunk chunk = cblk.openChunk(DEVICE, -1)) {
 			fail();
 		} catch (final IOException ioe) {
 			// expected
 		}
 	}
-	
+
 	public void testClose() throws IOException {
 		final Chunk chunk = cblk.openChunk(DEVICE);
 
@@ -112,7 +112,7 @@ public class CapiBlockDeviceTest {
 		} catch (final IOException ioe) {
 			fail(ioe.getMessage());
 		}
-		
+
 		try {
 			chunk.close();
 			fail();
@@ -120,11 +120,11 @@ public class CapiBlockDeviceTest {
 			// expected
 		}
 	}
-	
+
 	@Test
 	public void testExceptions() throws Exception {
 		final ByteBuffer buf = ByteBuffer.allocateDirect(4096);
-		try (final Chunk chunk = cblk.openChunk(DEVICE, 0)) {  
+		try (final Chunk chunk = cblk.openChunk(DEVICE, 0)) {
 			try {
 				chunk.readBlock(-1, 1, buf);
 				fail();
@@ -149,15 +149,15 @@ public class CapiBlockDeviceTest {
 			} catch (final IOException ioe) {
 				// expected
 			}
-		} 
+		}
 	}
-	
+
 	@Test
 	public void testSynchronous() throws Exception {
 		final Chunk chunk = cblk.openChunk(DEVICE);
 
 		final String str = "THIS IS A TEST"; //$NON-NLS-1$
-		
+
 		final ByteBuffer buf = ByteBuffer.allocateDirect(4096);
 
 		final ObjectStreamBuffer buffer = ObjectStreamBuffer.wrap(str);
@@ -183,7 +183,7 @@ public class CapiBlockDeviceTest {
 		final Chunk chunk = cblk.openChunk(DEVICE);
 
 		final String str = generateString(10 * 4096);
-		
+
 		final ByteBuffer buf = ByteBuffer.allocateDirect(10 * 4096);
 
 		final ObjectStreamBuffer buffer = ObjectStreamBuffer.wrap(10, str);
@@ -217,7 +217,7 @@ public class CapiBlockDeviceTest {
 		chunk.close();
 
 		assertTrue(w == 1);
-		
+
 		final Chunk chunk2 = cblk.openChunk(DEVICE);
 
 		final ByteBuffer buf = ByteBuffer.allocateDirect(4096);
@@ -231,7 +231,7 @@ public class CapiBlockDeviceTest {
 		assertTrue(f.get().longValue() == 1L);
 		assertEquals(buffer2.unwrap(), str);
 	}
-	
+
 	@Test
 	public void testAsynchronousWrite() throws Exception {
 		final Chunk chunk = cblk.openChunk(DEVICE);
@@ -239,17 +239,17 @@ public class CapiBlockDeviceTest {
 		final String str = "THIS IS A TEST"; //$NON-NLS-1$
 
 		final ByteBuffer buf = ByteBuffer.allocateDirect(4096);
-		
+
 		final ObjectStreamBuffer buffer = ObjectStreamBuffer.wrap(str);
 
 		final Future<Long> f = chunk.writeBlockAsync(0, 1, buffer.buf);
 
 		final long w = f.get().longValue();
-		
+
 		chunk.close();
-		
+
 		assertTrue(w == 1);
-		
+
 		final Chunk chunk2 = cblk.openChunk(DEVICE);
 
 		final long r = chunk2.readBlock(0, 1, buf);
@@ -261,13 +261,13 @@ public class CapiBlockDeviceTest {
 		assertTrue(r == 1);
 		assertEquals(buffer2.unwrap(), str);
 	}
-	
+
 	@Test
 	public void testMultipleAsynchronous() throws Exception {
 		final Chunk chunk = cblk.openChunk(DEVICE);
 
 		final String str = generateString(10 * 4096);
-		
+
 		final ByteBuffer buf = ByteBuffer.allocateDirect(10 * 4096);
 
 		final ObjectStreamBuffer buffer = ObjectStreamBuffer.wrap(10, str);
@@ -275,17 +275,17 @@ public class CapiBlockDeviceTest {
 		Future<Long> f = chunk.writeBlockAsync(5, 10, buffer.buf);
 
 		final long w = f.get().longValue();
-		
+
 		chunk.close();
 
 		assertTrue(w == 10);
-		
+
 		final Chunk chunk2 = cblk.openChunk(DEVICE);
 
 		final Future<Long> f2 = chunk2.readBlockAsync(5, 10, buf);
 
 		final long r = f2.get().longValue();
-		
+
 		final ObjectStreamBuffer buffer2 = new ObjectStreamBuffer(buf);
 
 		chunk2.close();
@@ -293,75 +293,66 @@ public class CapiBlockDeviceTest {
 		assertTrue(r == 10);
 		assertEquals(buffer2.unwrap(), str);
 	}
-	
+
 	@Test
 	public void testTimeout() throws Exception {
-		if (!cblk.useEmulation()) {
-			try (final Chunk chunk = cblk.openChunk(DEVICE)) {  //$NON-NLS-1$ 
-				final String str = generateString(100 * 4096);
-
-				final ObjectStreamBuffer buffer = ObjectStreamBuffer.wrap(100, str);
-
-				Future<Long> f = chunk.writeBlockAsync(0, 100, buffer.buf);
-
-				f.get(1, TimeUnit.NANOSECONDS);
-			
-				fail();
-			} catch (final TimeoutException te) {
-				// expected
-			}
-		}
-		
-		try (final Chunk chunk = cblk.openChunk(DEVICE)) {  //$NON-NLS-1$ 
+		try (final Chunk chunk = cblk.openChunk(DEVICE)) { // $NON-NLS-1$
 			final String str = generateString(100 * 4096);
 
 			final ObjectStreamBuffer buffer = ObjectStreamBuffer.wrap(100, str);
 
 			Future<Long> f = chunk.writeBlockAsync(0, 100, buffer.buf);
 
-			f.get(1, TimeUnit.SECONDS);
+			f.get(1, TimeUnit.NANOSECONDS);
+
+			if (!cblk.isEmulated()) {
+				fail();
+			}
 		} catch (final TimeoutException te) {
-			fail("timeout unexpected"); //$NON-NLS-1$
+			// expected
+			if (cblk.isEmulated()) {
+				fail("timeout unexpected"); //$NON-NLS-1$
+			}
 		}
 	}
-	
+
 	@Test
 	public void testStatus() throws Exception {
-		try (final Chunk chunk = cblk.openChunk(DEVICE)) {  //$NON-NLS-1$ 
+		try (final Chunk chunk = cblk.openChunk(DEVICE)) { // $NON-NLS-1$
 			final Stats stats = chunk.getStats();
 			assertTrue(stats.blockSize == 4096);
-			
-			final String str = "test content"; //$NON-NLS-1$			
+
+			final String str = "test content"; //$NON-NLS-1$
 			final ObjectStreamBuffer buffer = ObjectStreamBuffer.wrap(2, str);
-			
+
 			chunk.writeBlock(0, 2, buffer.buf);
-			
+
 			final Stats stats2 = chunk.getStats();
 			assertTrue(stats2.numWrites == stats.numWrites + 1);
 			assertTrue(stats2.numBlocksWritten == stats.numBlocksWritten + 2);
-			
+
 			final ByteBuffer buf = ByteBuffer.allocateDirect(6 * 4096);
 
 			chunk.readBlock(0, 6, buf);
-			
+
 			final Stats stats3 = chunk.getStats();
-			
+
 			assertTrue(stats3.numReads == stats.numReads + 1);
 			assertTrue(stats3.numBlocksRead == stats.numBlocksRead + 6);
-		
+
 			final Future<Long> w = chunk.writeBlockAsync(0, 2, buffer.buf);
-			
+
 			w.get();
-			
+
 			final Stats stats4 = chunk.getStats();
 			assertTrue(stats4.numAWrites == stats.numAWrites + 1);
 			assertTrue(stats4.numBlocksWritten == stats3.numBlocksWritten + 2);
 		}
 	}
-	
+
 	@Test
 	public void testBlock() throws Exception {
-		try (final Chunk chunk = cblk.openChunk(DEVICE)) {  //$NON-NLS-1$ 
+		try (final Chunk chunk = cblk.openChunk(DEVICE)) { // $NON-NLS-1$
 			final ByteBuffer buf = ByteBuffer.allocateDirect(1);
 			try {
 				chunk.readBlock(0, 100, buf);
