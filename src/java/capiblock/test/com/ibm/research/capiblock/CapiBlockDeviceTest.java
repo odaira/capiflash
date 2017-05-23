@@ -296,18 +296,20 @@ public class CapiBlockDeviceTest {
 	
 	@Test
 	public void testTimeout() throws Exception {
-		try (final Chunk chunk = cblk.openChunk(DEVICE)) {  //$NON-NLS-1$ 
-			final String str = generateString(100 * 4096);
+		if (!cblk.useEmulation()) {
+			try (final Chunk chunk = cblk.openChunk(DEVICE)) {  //$NON-NLS-1$ 
+				final String str = generateString(100 * 4096);
 
-			final ObjectStreamBuffer buffer = ObjectStreamBuffer.wrap(100, str);
+				final ObjectStreamBuffer buffer = ObjectStreamBuffer.wrap(100, str);
 
-			Future<Long> f = chunk.writeBlockAsync(0, 100, buffer.buf);
+				Future<Long> f = chunk.writeBlockAsync(0, 100, buffer.buf);
 
-			f.get(1, TimeUnit.NANOSECONDS);
+				f.get(1, TimeUnit.NANOSECONDS);
 			
-			fail();
-		} catch (final TimeoutException te) {
-			// expected
+				fail();
+			} catch (final TimeoutException te) {
+				// expected
+			}
 		}
 		
 		try (final Chunk chunk = cblk.openChunk(DEVICE)) {  //$NON-NLS-1$ 

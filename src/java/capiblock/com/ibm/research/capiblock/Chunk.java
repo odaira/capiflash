@@ -73,7 +73,7 @@ public class Chunk implements AutoCloseable {
 	}
 
 	// check a buffer
-	private static final void checkBuffer(final long nBlocks,
+	static final void checkBuffer(final long nBlocks,
 			final ByteBuffer buf) {
 		if (buf == null) {
 			throw new IllegalArgumentException("buffer must not be null."); //$NON-NLS-1$
